@@ -3,6 +3,15 @@
     internal class BuildingController : IBuildingController
     {
         /// <summary>
+        /// Class to store error messages.
+        /// </summary>
+        private class ErrorMessages
+        {
+            public static readonly string abnormalInitialState = "Argument Exception: BuildingController can " +
+                "only be initialised to the following states\n" +
+                "'open', 'closed', 'out of hours'";
+        }
+        /// <summary>
         /// Stores the buildingID.
         /// </summary>
         private string buildingID;
@@ -20,6 +29,22 @@
         {
             buildingID = id.ToLower();
             currentState = State.initialState;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">The buildingID</param>
+        /// <param name="startState">The currentState</param>
+        /// <exception cref="ArgumentException"></exception>
+        public BuildingController(string id, string startState)
+        {
+            if (!State.IsNormal(startState.ToLower()))
+            {
+                throw new ArgumentException(ErrorMessages.abnormalInitialState);
+            }
+            buildingID = id.ToLower();
+            currentState = startState.ToLower();
         }
 
         /// <summary>
@@ -62,6 +87,10 @@
         {
             if (!State.IsValid(state))
                 return false;
+            if (!State.IsValidTransition([ currentState, state ]))
+                return false;
+            if (currentState == state)
+                return true;
             currentState = state;
             return true;
         }
