@@ -15,7 +15,7 @@ namespace BuildingControllerProject
             private class ErrorMessages
             {
                 public static readonly string abnormalInitialState = "Argument Exception: BuildingController can " +
-                    "only be initialised to the following states\n" +
+                    "only be initialised to the following states " +
                     "'open', 'closed', 'out of hours'";
             }
 
