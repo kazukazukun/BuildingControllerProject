@@ -1,4 +1,6 @@
-﻿namespace BuildingControllerProject
+﻿using System.Security.Claims;
+
+namespace BuildingControllerProject
 {
     internal class BuildingController : IBuildingController
     {
@@ -33,6 +35,11 @@
             /// Array to hold normal operation states.
             /// </summary>
             public static readonly string[] normalStates = { open, outOfHours, closed };
+
+            /// <summary>
+            /// Array to hold abnormal operation states.
+            /// </summary>
+            public static readonly string[] abnormalStates = { fireAlarm, fireDrill };
 
             /// <summary>
             /// 2D array to hold invalid state transitions.
@@ -89,6 +96,21 @@
             }
 
             /// <summary>
+            /// Checks if the given state is abnormal.
+            /// </summary>
+            /// <param name="state"></param>
+            /// <returns>True if the state is abnormal, else false</returns>
+            public static bool IsAbnormal(string state)
+            {
+                for (int i = 0; i < abnormalStates.Length; i++)
+                {
+                    if (abnormalStates[i] == state)
+                        return true;
+                }
+                return false;
+            }
+
+            /// <summary>
             /// If a start state is given, validates it, else assigns initialState as startState.
             /// </summary>
             /// <param name="startState"></param>
@@ -107,7 +129,26 @@
             }
 
         }
- 
+
+        /// <summary>
+        /// Class to store manager names.
+        /// </summary>
+        public class Managers
+        {
+            public const string doors = "Doors";
+            public const string lights = "Lights";
+            public const string fireAlarm = "FireAlarm";
+        }
+
+        /// <summary>
+        /// Class to store texts for EmailService parameters.
+        /// </summary>
+        private class EmailServiceParams
+        {
+            public const string address = "smartbuilding@uclan.ac.uk";
+            public const string subject = "failed to log alarm";
+        }
+
         /// <summary>
         /// Stores the buildingID.
         /// </summary>
@@ -116,6 +157,10 @@
         /// Stores the current building state.
         /// </summary>
         private string currentState;
+        /// <summary>
+        /// Stores the previous building state.
+        /// </summary>
+        private string previousState = State.outOfHours;
 
         // Managers
         private IFireAlarmManager? fireAlarmManager;
@@ -124,6 +169,11 @@
         // Services
         private IEmailService? emailService;
         private IWebService? webService;
+
+        // Text returned by a device functioning properly
+        const string deviceOK = "OK";
+        // Text returned by a device malfunctioning
+        const string deviceFaulty = "FAULT";
 
         /// <summary>
         /// Create a BuildingController with the given id.
@@ -157,9 +207,9 @@
         /// <param name="iWebService"></param>
         /// <param name="iEmailService"></param>
         public BuildingController(string id, ILightManager iLightManager, IFireAlarmManager iFireAlarmManager,
-                            IDoorManager iDoorManager, IWebService iWebService,IEmailService iEmailService)
+                            IDoorManager iDoorManager, IWebService iWebService, IEmailService iEmailService)
         {
-            currentState= State.InitializeState();
+            currentState = State.InitializeState();
             buildingID = id.ToLower();
             fireAlarmManager = iFireAlarmManager;
             lightManager = iLightManager;
@@ -198,7 +248,8 @@
 
         /// <summary>
         /// Sets given state as current state of the building.
-        /// Checks if the given state is valid,
+        /// Checks if the given state is valid and
+        /// is a possible transition from current state,
         /// if true, the state is set,
         /// else, the state is unchanged.
         /// </summary>
@@ -208,26 +259,143 @@
         {
             if (!State.IsValid(state))
                 return false;
-            if (!State.IsValidTransition([ currentState, state ]))
+            if (!State.IsValidTransition([currentState, state]))
                 return false;
             if (currentState == state)
                 return true;
-            if (state == State.open)
-            {
-                if(!doorManager.OpenAllDoors())
-                    return false;
-            }
+            if (State.IsAbnormal(currentState) && previousState != state)
+                return false;
+            if (!AffectStateTransition(state))
+                return false;
+            previousState = currentState;
             currentState = state;
             return true;
         }
 
         /// <summary>
+        /// According to the given state,
+        /// fire alarms, doors, lights, web service and email service are affected.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns>True if affected properly, else false</returns>
+        private bool AffectStateTransition(string state)
+        {
+            if (state == State.open)
+            {
+                if (doorManager == null)
+                    return false;
+                if (!doorManager.OpenAllDoors())
+                    return false;
+            }
+            else if (state == State.closed)
+            {
+                if (doorManager == null || lightManager == null)
+                    return false;
+                if (!doorManager.LockAllDoors())
+                    return false;
+                lightManager.SetAllLights(false);
+            }
+            else if (state == State.fireAlarm)
+            {
+                if (fireAlarmManager == null)
+                    return false;
+                fireAlarmManager.SetAlarm(true);
+                if (doorManager == null)
+                    return false;
+                doorManager.OpenAllDoors();
+                if (lightManager == null)
+                    return false;
+                lightManager.SetAllLights(true);
+                if (webService == null)
+                    return false;
+                try
+                {
+                    webService.LogFireAlarm(State.fireAlarm);
+                }
+                catch (Exception exception)
+                {
+                    emailService?.SendMail(EmailServiceParams.address, EmailServiceParams.subject, exception.ToString());
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Get status reports of all three managers.
+        /// Logs an engineer inquery if any of the devices are malfunctioning.
         /// </summary>
         /// <returns>The light manager status, door manager status and fire alarm manager status</returns>
         public string GetStatusReport()
         {
-            return lightManager.GetStatus() + doorManager.GetStatus() + fireAlarmManager.GetStatus();
+            string lightStatus = "";
+            string doorStatus = "";
+            string fireAlarmStatus = "";
+            List<string> faultyDevices = new List<string>();
+            if (lightManager != null)
+            {
+                lightStatus = lightManager.GetStatus();
+                if (IsFaulty(lightStatus, Managers.lights))
+                    faultyDevices.Add(Managers.lights);
+            }
+            if (doorManager != null)
+            {
+                doorStatus = doorManager.GetStatus();
+                if (IsFaulty(doorStatus, Managers.doors))
+                    faultyDevices.Add(Managers.doors);
+            }
+            if (fireAlarmManager != null)
+            {
+                fireAlarmStatus = fireAlarmManager.GetStatus();
+                if (IsFaulty(fireAlarmStatus, Managers.fireAlarm))
+                    faultyDevices.Add(Managers.fireAlarm);
+            }
+            ReportFaultyDevices(faultyDevices);
+            return lightStatus + doorStatus + fireAlarmStatus;
+        }
+
+        /// <summary>
+        /// Checks if the given status report contains about any faulty devices.
+        /// </summary>
+        /// <param name="statusReport">The status report</param>
+        /// <param name="managerType">The manager type</param>
+        /// <returns>True if the report contains about any faulty devices, else false</returns>
+        private bool IsFaulty(string statusReport, string managerType)
+        {
+            List<string> eachStatus = new List<string>(statusReport.Split(','));
+            if (eachStatus[0] == managerType && eachStatus[eachStatus.Count - 1] == "")
+            {
+                for (int i = 1; i < eachStatus.Count - 1; i++)
+                {
+                    if (eachStatus[i] != deviceOK)
+                        return true;
+                }
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Logs an engineer inquery based on the given malfunctioning devices list.
+        /// </summary>
+        /// <param name="faultDevices">The list containing faulty device types</param>
+        private void ReportFaultyDevices(List<string> faultDevices)
+        {
+            if (webService == null)
+                return;
+            if (faultDevices.Count > 0)
+            {
+                string log = "";
+                if (faultDevices.Count == 1)
+                    log += faultDevices[0];
+                else
+                {
+                    for (int i = 0; i < faultDevices.Count; i++)
+                    {
+                        log += faultDevices[i] + ",";
+                    }
+                }
+                webService.LogEngineerRequired(log);
+            }
         }
     }
 }
