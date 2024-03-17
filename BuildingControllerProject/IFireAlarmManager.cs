@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface IFireAlarmManager : IManager
+    public interface IFireAlarmManager : IManager
     {
         /// <summary>
         /// Sets alarm to Active/Inactive.

@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface IWebService
+    public interface IWebService
     {
         /// <summary>
         /// Changes log details with given logDetails.

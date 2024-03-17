@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface ILightManager : IManager
+    public interface ILightManager : IManager
     {
         /// <summary>
         /// Sets the light with given lightID On/Off.

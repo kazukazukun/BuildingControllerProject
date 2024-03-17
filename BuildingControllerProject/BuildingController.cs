@@ -2,7 +2,7 @@
 
 namespace BuildingControllerProject
 {
-    internal class BuildingController : IBuildingController
+    public class BuildingController : IBuildingController
     {
         /// <summary>
         /// Class to store possible states of the Building.

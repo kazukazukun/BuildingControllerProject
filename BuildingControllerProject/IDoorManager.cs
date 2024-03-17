@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface IDoorManager : IManager
+    public interface IDoorManager : IManager
     {
         /// <summary>
         /// Opens the door associated with the given doorID.

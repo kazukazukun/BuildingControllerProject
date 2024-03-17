@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface IManager
+    public interface IManager
     {
         /// <summary>
         /// Gets the status.

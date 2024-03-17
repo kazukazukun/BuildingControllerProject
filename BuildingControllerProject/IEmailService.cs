@@ -1,6 +1,6 @@
 ﻿namespace BuildingControllerProject
 {
-    internal interface IEmailService
+    public interface IEmailService
     {
         /// <summary>
         /// Sends an email to the given emailAddress.
