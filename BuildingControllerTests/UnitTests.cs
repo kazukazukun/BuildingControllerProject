@@ -153,7 +153,7 @@ namespace BuildingControllerTests
         };
 
         /// <summary>
-        /// Example return values for <see cref="ILightManager"/> stubs.
+        /// Sample return texts for <see cref="ILightManager"/> stubs.
         /// </summary>
         private static readonly object?[] LightManagerStatuses =
         {
@@ -165,7 +165,7 @@ namespace BuildingControllerTests
         };
 
         /// <summary>
-        /// Example return values for <see cref="IDoorManager"/> stubs.
+        /// Sample return texts for <see cref="IDoorManager"/> stubs.
         /// </summary>
         private static readonly object?[] DoorManagerStatuses =
         {
@@ -177,7 +177,7 @@ namespace BuildingControllerTests
         };
 
         /// <summary>
-        /// Example return values for <see cref="IFireAlarmManager"/> stubs.
+        /// Sample return texts for <see cref="IFireAlarmManager"/> stubs.
         /// </summary>
         private static readonly object?[] AlarmManagerStatuses =
         {
@@ -193,7 +193,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test if a valid constructor exists for <see cref="BuildingController"/> through reflection.
-        /// Satisfies <strong>L1R1</strong>.
+        /// For L1R1.
         /// </summary>
         [Test]
         public void Constructor_WhenSingleParameter_HasCorrectSignature()
@@ -219,7 +219,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test initialisation of <c>buildingID</c> when constructor parameter set.
-        /// Satisfies <strong>L1R2</strong>, <strong>L1R3</strong>.
+        /// For L1R2, L1R3.
         /// </summary>
         [TestCase("Building ID")]
         [TestCaseSource(nameof(TestStrings))]
@@ -228,10 +228,10 @@ namespace BuildingControllerTests
             BuildingController controller;
 
             controller = new BuildingController(buildingID);
-            string result = controller.GetBuildingID();
+            string? result = controller.GetBuildingID();
 
 
-            string expected = buildingID;
+            string? expected = buildingID;
             if (!string.IsNullOrEmpty(buildingID))
             {
                 expected = expected.ToLower();
@@ -242,7 +242,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test <c>buildingID</c> setter.
-        /// Satisfies <strong>L1R4</strong>.
+        /// For L1R4.
         /// </summary>
         [TestCase("Building ID")]
         [TestCaseSource(nameof(TestStrings))]
@@ -251,7 +251,7 @@ namespace BuildingControllerTests
             BuildingController controller = new("");
 
             controller.SetBuildingID(buildingID);
-            string result = controller.GetBuildingID();
+            string? result = controller.GetBuildingID();
 
             string expected = buildingID;
             if (!string.IsNullOrEmpty(buildingID))
@@ -264,7 +264,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test default initialisation of <c>currentState</c>.
-        /// Satisfies <strong>L1R5</strong>, <strong>L1R6</strong>.
+        /// For L1R5, L1R6.
         /// </summary>
         [Test]
         public void Constructor_ByDefault_InitialisesCurrentState()
@@ -272,16 +272,14 @@ namespace BuildingControllerTests
             BuildingController controller;
 
             controller = new BuildingController("");
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(BuildingState.outOfHours));
         }
 
-        // L1R7 (SetCurrentState from initial state)
-
         /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> with invalid states.
-        /// Satisfies <strong>L1R7</strong>.
+        /// For L1R7.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenInvalidState_ReturnsFalse(
@@ -298,13 +296,13 @@ namespace BuildingControllerTests
 
         // LEVEL 2 TESTS //
 
-        // L2R1 (STD)
+        //For L2R1
 
         // From Normal States
 
         /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'closed' state.
-        /// Satisfies <strong>L2R1</strong>.
+        /// For L2R1.
         /// </summary>
         [TestCase(BuildingState.outOfHours)]
         [TestCase(BuildingState.fireDrill)]
@@ -322,7 +320,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'open' state.
-        /// Satisfies <strong>L2R1</strong>.
+        /// For L2R1.
         /// </summary>
         [TestCase(BuildingState.outOfHours)]
         [TestCase(BuildingState.fireDrill)]
@@ -340,7 +338,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'open' state.
-        /// Satisfies <strong>L2R1</strong>.
+        /// For L2R1.
         /// </summary>
         [TestCase(BuildingState.outOfHours)]
         [TestCase(BuildingState.fireDrill)]
@@ -351,14 +349,14 @@ namespace BuildingControllerTests
 
             controller.SetCurrentState(BuildingState.open);
             controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(state));
         }
 
         /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'closed' state.
-        /// Satisfies <strong>L2R1</strong>.
+        /// For L2R1.
         /// </summary>
         [TestCase(BuildingState.outOfHours)]
         [TestCase(BuildingState.fireDrill)]
@@ -369,18 +367,29 @@ namespace BuildingControllerTests
 
             controller.SetCurrentState(BuildingState.closed);
             controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(state));
         }
 
+        /// <summary>
+        /// Test <see cref="BuildingController.SetCurrentState"/> when setting the same state.
+        /// </summary>
+        /// For L2R2.
+        [TestCase(BuildingState.outOfHours)]
+        [TestCase(BuildingState.open)]
+        [TestCase(BuildingState.closed)]
+        public void SetCurrentState_WhenCurrentStateSame_SetsState(string state)
+        {
+            BuildingController controller = new("", state);
+            bool result = controller.SetCurrentState(state);
 
- ////////////////////////////////
-
+            Assert.That(result, Is.True);  
+        }
 
         /// <summary>
         /// Test that a two-parameter constructor for <see cref="BuildingController"/> exists.
-        /// Satisfies <strong>L2R3</strong>.
+        /// For L2R3.
         /// </summary>
         [Test]
         public void Constructor_WhenTwoParameters_HasCorrectSignature()
@@ -411,7 +420,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test constructor when using startState argument with a normal state.
-        /// Satisfies <strong>L2R3</strong>.
+        /// For L2R3.
         /// </summary>
         [Test, TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalState_SetsStartState(string state)
@@ -419,14 +428,14 @@ namespace BuildingControllerTests
             BuildingController controller;
 
             controller = new BuildingController("", state);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(state));
         }
 
         /// <summary>
         /// Test constructor when using startState argument with a normal state in capital letters.
-        /// Satisfies <strong>L2R3</strong>.
+        /// For L2R3.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalStateCapitals_SetsStartState(string state)
@@ -434,14 +443,14 @@ namespace BuildingControllerTests
             BuildingController controller;
 
             controller = new BuildingController("", state.ToUpper());
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(state));
         }
 
         /// <summary>
         /// Test constructor when using startState argument with a normal state in title case.
-        /// Satisfies <strong>L2R3</strong>.
+        /// For L2R3.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalStateMixedCapitals_SetsStartState(string state)
@@ -450,14 +459,14 @@ namespace BuildingControllerTests
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
 
             controller = new BuildingController("", ti.ToTitleCase(state));
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(state));
         }
 
         /// <summary>
         /// Test constructor when using startState argument with an invalid state.
-        /// Satisfies <strong>L2R3</strong>.
+        /// For L2R3.
         /// </summary>
         [TestCase(BuildingState.fireDrill)]
         [TestCase(BuildingState.fireAlarm)]
@@ -476,7 +485,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test that a six-parameter constructor for <see cref="BuildingController"/> exists.
-        /// Satisfies <strong>L3R1</strong>.
+        /// For L3R1.
         /// </summary>
         [Test]
         public void Constructor_WhenSixParameters_HasCorrectSignature()
@@ -528,7 +537,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.GetStatusReport"/> method using stubs.
-        /// Satisfies <strong>L3R3</strong>.
+        /// For L3R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenCalled_ReturnsStatusMessages(
@@ -547,7 +556,7 @@ namespace BuildingControllerTests
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
-            string result = controller.GetStatusReport();
+            string? result = controller.GetStatusReport();
 
             Assert.That(result, Is.EqualTo(string.Format("{0}{1}{2}",
                 lightStatus ?? "" , doorStatus ?? "" , alarmStatus ?? "")));
@@ -555,7 +564,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>.
+        /// For L3R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpenFromInitial_CallsOpenAllDoors([Values] bool doorsOpen)
@@ -576,7 +585,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>.
+        /// For L3R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpenFromEmergency_CallsOpenAllDoors([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string initialState, [Values] bool doorsOpen)
@@ -604,7 +613,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>, <strong>L3R5</strong>.
+        /// For L3R4, L3R5.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpen_ReturnsBoolean([Values] bool doorsOpen)
@@ -625,7 +634,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>, <strong>L3R5</strong>.
+        /// For L3R4, L3R5.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpenFromEmergency_ReturnsBoolean([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string initialState, [Values] bool doorsOpen)
@@ -651,7 +660,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R5</strong>.
+        /// For L3R5.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpen_SetsState()
@@ -666,14 +675,14 @@ namespace BuildingControllerTests
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.SetCurrentState(BuildingState.open);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(BuildingState.open));
         }
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>.
+        /// For L3R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpen_DoesNotSetState()
@@ -688,14 +697,14 @@ namespace BuildingControllerTests
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.SetCurrentState(BuildingState.open);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(BuildingState.outOfHours));
         }
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R5</strong>.
+        /// For L3R5.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpenFromEmergency_SetsState([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string initialState)
@@ -712,14 +721,14 @@ namespace BuildingControllerTests
             controller.SetCurrentState(BuildingState.open);
             controller.SetCurrentState(initialState);
             controller.SetCurrentState(BuildingState.open);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(BuildingState.open));
         }
 
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/> when moving to <c>open</c> state.
-        /// Satisfies <strong>L3R4</strong>.
+        /// For L3R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToOpenFromEmergency_DoesNotSetState([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string initialState)
@@ -739,7 +748,7 @@ namespace BuildingControllerTests
             doorManager.OpenAllDoors().Returns(false);
 
             controller.SetCurrentState(BuildingState.open);
-            string result = controller.GetCurrentState();
+            string? result = controller.GetCurrentState();
 
             Assert.That(result, Is.EqualTo(initialState));
         }
@@ -747,7 +756,7 @@ namespace BuildingControllerTests
         /// <summary>
         /// Test the <see cref="BuildingController.SetCurrentState"/>
         /// when moving to <c>open</c> state if already there.
-        /// Satisfies <strong>L3R4</strong>.
+        /// For L3R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingFromOpenToOpen_DoesNotCallOpenAllDoors()
@@ -778,7 +787,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IDoorManager.LockAllDoors"/> method
         /// when moving to <c>closed</c> state from the initial state.
-        /// Satisfies <strong>L4R1</strong>.
+        /// For L4R1.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToClosedFromInitial_CallsLockAllDoors([Values] bool doorsLock)
@@ -801,7 +810,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IDoorManager.LockAllDoors"/> method
         /// when moving back to <c>closed</c> state from an emergency state.
-        /// Satisfies <strong>L4R1</strong>.
+        /// For L4R1.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToClosedFromEmergency_CallsLockAllDoors([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string sourceState, [Values] bool doorsLock)
@@ -828,7 +837,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="ILightManager.SetAllLights"/> method
         /// when moving to <c>closed</c> state from the initial state.
-        /// Satisfies <strong>L4R1</strong>.
+        /// For L4R1.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToClosedFromInitial_CallsSetAllLights()
@@ -851,7 +860,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="ILightManager.SetAllLights"/> method
         /// when moving back to <c>closed</c> state from an emergency state.
-        /// Satisfies <strong>L4R1</strong>.
+        /// For L4R1.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToClosedFromEmergency_CallsSetAllLights([Values(BuildingState.fireAlarm, BuildingState.fireDrill)] string sourceState)
@@ -879,7 +888,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IFireAlarmManager.SetAlarm"/> method
         /// when moving to <c>fire alarm</c> state.
-        /// Satisfies <strong>L4R2</strong>.
+        /// For L4R2.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSetAlarm(string sourceState)
@@ -904,7 +913,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IDoorManager.OpenAllDoors"/> method
         /// when moving to <c>fire alarm</c> state.
-        /// Satisfies <strong>L4R2</strong>.
+        /// For L4R2.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsOpenAllDoors(string sourceState)
@@ -930,7 +939,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="ILightManager.SetAllLights"/> method
         /// when moving to <c>fire alarm</c> state.
-        /// Satisfies <strong>L4R2</strong>.
+        /// For L4R2.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSetAllLights(string sourceState)
@@ -955,7 +964,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IWebService.LogFireAlarm"/> method
         /// when moving to <c>fire alarm</c> state.
-        /// Satisfies <strong>L4R2</strong>.
+        /// For L4R2.
         /// </summary>
         [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsLogFireAlarm(string sourceState)
@@ -982,7 +991,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.GetStatusReport"/>
         /// calls the <see cref="IWebService.LogEngineerRequired"/>
         /// method if a fault was detected.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [TestCase(ManagerStatus.twoDevicesOkOneDeviceFaulty, ManagerStatus.twoDevicesOkOneDeviceFaulty, ManagerStatus.twoDevicesOkOneDeviceFaulty)]
         [TestCase(ManagerStatus.fiftyDevicesOk, ManagerStatus.fiftyDevicesOk, ManagerStatus.oneDeviceFaulty)]
@@ -1013,7 +1022,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.GetStatusReport"/>
         /// does not call the <see cref="IWebService.LogEngineerRequired"/>
         /// method if a fault was not detected.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenAllOk_DoesNotCallLogEngineerRequired(
@@ -1041,7 +1050,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.GetStatusReport"/>
         /// calls the <see cref="IWebService.LogEngineerRequired"/>
         /// method if a fault was detected in the lights manager.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsSingleManagerInLights_CallsLogEngineerRequired(
@@ -1069,7 +1078,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.GetStatusReport"/>
         /// calls the <see cref="IWebService.LogEngineerRequired"/>
         /// method if a fault was detected in the doors manager.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsSingleManagerInDoors_CallsLogEngineerRequired(
@@ -1097,7 +1106,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.GetStatusReport"/>
         /// calls the <see cref="IWebService.LogEngineerRequired"/>
         /// method if a fault was detected in the fire alarm manager.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsSingleManagerInAlarm_CallsLogEngineerRequired(
@@ -1123,7 +1132,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.GetStatusReport"/> method using stubs.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsAllManagers_CallsLogEngineerRequired(
@@ -1150,7 +1159,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.GetStatusReport"/> method using stubs.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsLightsAndDoors_CallsLogEngineerRequired(
@@ -1177,7 +1186,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.GetStatusReport"/> method using stubs.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsLightsAndAlarm_CallsLogEngineerRequired(
@@ -1204,7 +1213,7 @@ namespace BuildingControllerTests
 
         /// <summary>
         /// Test the <see cref="BuildingController.GetStatusReport"/> method using stubs.
-        /// Satisfies <strong>L4R3</strong>.
+        /// For L4R3.
         /// </summary>
         [Test]
         public void GetStatusReport_WhenFindsFaultsDoorsAndAlarm_CallsLogEngineerRequired(
@@ -1235,7 +1244,7 @@ namespace BuildingControllerTests
         /// Test that <see cref="BuildingController.SetCurrentState"/>
         /// calls the <see cref="IEmailService.SendEmail"/> method
         /// when moving to <c>fire alarm</c> state.
-        /// Satisfies <strong>L4R4</strong>.
+        /// For L4R4.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSendEmail(
