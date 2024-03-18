@@ -9,7 +9,7 @@
         /// Gets current state of the building.
         /// </summary>
         /// <returns>State of the building</returns>
-        public string GetCurrentState();
+        public string? GetCurrentState();
 
         /// <summary>
         /// Sets given state as current state of the building.

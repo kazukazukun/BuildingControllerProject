@@ -120,8 +120,9 @@ namespace BuildingControllerProject
             {
                 if (startState == initialState)
                     return initialState;
-                startState = startState.ToLower();
-                if (!State.IsNormal(startState))
+                if(!string.IsNullOrEmpty(startState))
+                    startState = startState.ToLower();
+                if (startState == null || !State.IsNormal(startState))
                 {
                     throw new ArgumentException(ErrorMessages.abnormalInitialState);
                 }
@@ -182,7 +183,9 @@ namespace BuildingControllerProject
         /// <param name="id">The buildingID</param>
         public BuildingController(string id)
         {
-            buildingID = id.ToLower();
+            if (!string.IsNullOrEmpty(id))
+                id = id.ToLower();
+            buildingID = id;
             currentState = State.InitializeState();
         }
 
@@ -193,8 +196,10 @@ namespace BuildingControllerProject
         /// <param name="startState">The currentState</param>
         public BuildingController(string id, string startState)
         {
+            if(!string.IsNullOrEmpty(id))
+                id = id.ToLower();
             currentState = State.InitializeState(startState);
-            buildingID = id.ToLower();
+            buildingID = id;
         }
 
         /// <summary>
@@ -234,14 +239,16 @@ namespace BuildingControllerProject
         /// <param name="id">The buildingID</param>
         public void SetBuildingID(string id)
         {
-            buildingID = id.ToLower();
+            if(!string.IsNullOrEmpty(id))
+                id = id.ToLower();
+            buildingID = id;
         }
 
         /// <summary>
         /// Gets current state of the building.
         /// </summary>
         /// <returns>State of the building</returns>
-        public string GetCurrentState()
+        public string? GetCurrentState()
         {
             return currentState;
         }
@@ -259,7 +266,7 @@ namespace BuildingControllerProject
         {
             if (!State.IsValid(state))
                 return false;
-            if (!State.IsValidTransition([currentState, state]))
+            if (!State.IsValidTransition(new string[] { currentState, state }))
                 return false;
             if (currentState == state)
                 return true;
