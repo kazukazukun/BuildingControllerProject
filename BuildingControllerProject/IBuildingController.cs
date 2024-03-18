@@ -22,7 +22,7 @@
         /// Gets buildingID.
         /// </summary>
         /// <returns>The buildingID</returns>
-        public string GetBuildingID();
+        public string? GetBuildingID();
 
         /// <summary>
         /// Sets buildingID to the given id.

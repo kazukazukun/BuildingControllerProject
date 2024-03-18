@@ -214,8 +214,10 @@ namespace BuildingControllerProject
         public BuildingController(string id, ILightManager iLightManager, IFireAlarmManager iFireAlarmManager,
                             IDoorManager iDoorManager, IWebService iWebService, IEmailService iEmailService)
         {
+            if(!string.IsNullOrEmpty(id))
+                id = id.ToLower();
             currentState = State.InitializeState();
-            buildingID = id.ToLower();
+            buildingID = id;
             fireAlarmManager = iFireAlarmManager;
             lightManager = iLightManager;
             doorManager = iDoorManager;
@@ -227,7 +229,7 @@ namespace BuildingControllerProject
         /// Get the buildingID.
         /// </summary>
         /// <returns>The buildingID</returns>
-        public string GetBuildingID()
+        public string? GetBuildingID()
         {
             return buildingID;
         }
@@ -340,19 +342,19 @@ namespace BuildingControllerProject
             List<string> faultyDevices = new List<string>();
             if (lightManager != null)
             {
-                lightStatus = lightManager.GetStatus();
+                lightStatus = lightManager.GetStatus() ?? "";
                 if (IsFaulty(lightStatus, Managers.lights))
                     faultyDevices.Add(Managers.lights);
             }
             if (doorManager != null)
             {
-                doorStatus = doorManager.GetStatus();
+                doorStatus = doorManager.GetStatus() ?? "";
                 if (IsFaulty(doorStatus, Managers.doors))
                     faultyDevices.Add(Managers.doors);
             }
             if (fireAlarmManager != null)
             {
-                fireAlarmStatus = fireAlarmManager.GetStatus();
+                fireAlarmStatus = fireAlarmManager.GetStatus() ?? "";
                 if (IsFaulty(fireAlarmStatus, Managers.fireAlarm))
                     faultyDevices.Add(Managers.fireAlarm);
             }
