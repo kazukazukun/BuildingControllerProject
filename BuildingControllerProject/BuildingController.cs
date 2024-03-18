@@ -306,20 +306,12 @@ namespace BuildingControllerProject
             }
             else if (state == State.fireAlarm)
             {
-                if (fireAlarmManager == null)
-                    return false;
-                fireAlarmManager.SetAlarm(true);
-                if (doorManager == null)
-                    return false;
-                doorManager.OpenAllDoors();
-                if (lightManager == null)
-                    return false;
-                lightManager.SetAllLights(true);
-                if (webService == null)
-                    return false;
+                fireAlarmManager?.SetAlarm(true);
+                doorManager?.OpenAllDoors();
+                lightManager?.SetAllLights(true);
                 try
                 {
-                    webService.LogFireAlarm(State.fireAlarm);
+                    webService?.LogFireAlarm(State.fireAlarm);
                 }
                 catch (Exception exception)
                 {
@@ -370,15 +362,26 @@ namespace BuildingControllerProject
         /// <returns>True if the report contains about any faulty devices, else false</returns>
         private bool IsFaulty(string statusReport, string managerType)
         {
-            List<string> eachStatus = new List<string>(statusReport.Split(','));
-            if (eachStatus[0] == managerType && eachStatus[eachStatus.Count - 1] == "")
-            {
-                for (int i = 1; i < eachStatus.Count - 1; i++)
+            if(string.IsNullOrEmpty(statusReport))
+                return true;
+            if(statusReport == managerType + ",")
+                return true;
+            try
+            { 
+                List<string> eachStatus = new List<string>(statusReport.Split(','));
+                if (eachStatus[0] == managerType && eachStatus[eachStatus.Count - 1] == "")
                 {
-                    if (eachStatus[i] != deviceOK)
-                        return true;
+                    for (int i = 1; i < eachStatus.Count - 1; i++)
+                    {
+                        if (eachStatus[i] != deviceOK)
+                            return true;
+                    }
+                    return false;
                 }
-                return false;
+            }
+            catch
+            {
+                return true;
             }
             return true;
         }
@@ -395,12 +398,19 @@ namespace BuildingControllerProject
             {
                 string log = "";
                 if (faultDevices.Count == 1)
-                    log += faultDevices[0];
+                    log = faultDevices[0];
                 else
                 {
                     for (int i = 0; i < faultDevices.Count; i++)
                     {
-                        log += faultDevices[i] + ",";
+                        if (i == 0)
+                        {
+                            log = faultDevices[i] + ",";
+                        }
+                        else
+                        {
+                            log += faultDevices[i] + ",";
+                        }
                     }
                 }
                 webService.LogEngineerRequired(log);

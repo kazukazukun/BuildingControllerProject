@@ -27,7 +27,7 @@ namespace BuildingControllerTests
         /// <summary>
         /// Argument names for the <see cref="BuildingController"/> constructor.
         /// </summary>
-        struct ControllerArgNames
+        struct ControllerArgumentNames
         {
             public const string buildingID = "id";
             public const string startState = "startState";
@@ -41,7 +41,7 @@ namespace BuildingControllerTests
         /// <summary>
         /// Store expected strings for <see cref="BuildingController"/> tests.
         /// </summary>
-        struct ExpectedStrings
+        struct ExpectedTexts
         {
             public const string initialStateException = "Argument Exception: BuildingController can only be initialised "
                 + "to the following states 'open', 'closed', 'out of hours'";
@@ -58,9 +58,9 @@ namespace BuildingControllerTests
             public const string doors = "Doors";
             public const string alarm = "FireAlarm";
 
-            public const string lightsWithPrefix = lights + ",";
-            public const string doorsWithPrefix = doors + ",";
-            public const string alarmWithPrefix = alarm + ",";
+            public const string lightsWithComma = lights + ",";
+            public const string doorsWithComma = doors + ",";
+            public const string alarmWithComma = alarm + ",";
 
             public const string oneDeviceOk = "OK,";
             public const string oneDeviceFaulty = "FAULT,";
@@ -86,7 +86,7 @@ namespace BuildingControllerTests
 
         }
 
-        private static readonly object[] ValidBuildingStates =
+        private static readonly object[] validStates =
         {
             BuildingState.closed,
             BuildingState.outOfHours,
@@ -95,7 +95,7 @@ namespace BuildingControllerTests
             BuildingState.fireDrill
         };
 
-        private static readonly object[] NormalBuildingStates =
+        private static readonly object[] normalStates =
         {
             BuildingState.closed,
             BuildingState.outOfHours,
@@ -118,36 +118,23 @@ namespace BuildingControllerTests
             "null",
             "abcdefghijklmnopqrstuvwxyz",
             "01234567890",
-            "The quick fox jumps over the lazy dog",
-            "á, é, í, ó, ú",
-            "🥸",
+            "Testing 1 testing 2 testing 3",
+            "卐卐卐卐卐卐卐卐卐卐卐卐卐卐卐卐",
+            "@, !, #, $, &, *, (, ), _, +",
             "'",
             ",",
             "\"",
             "!@#$%^&*(){}?+_:;/=-]['",
             "   ",
+            "\t",
             "\n",
-            "\r",
-            "\x05d\U000507a7",
-            "0",
-            "Ý",
-            "\U000b2d04\x87\U0007e552A",
-            "©þ\nù",
-            "ëõð",
+            "\0X12FAE6",
             "\x13",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-            "sed do eiusmod tempor incididunt ut labore et dolore magna " +
-            "aliqua. Ut enim ad minim veniam, quis nostrud exercitation " +
-            "ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-            "Duis aute irure dolor in reprehenderit in voluptate velit " +
-            "esse cillum dolore eu fugiat nulla pariatur. Excepteur sint " +
-            "occaecat cupidatat non proident, sunt in culpa qui officia " +
-            "deserunt mollit anim id est laborum."
+            "Society's needs come before individuals' needs."
         };
 
         private static readonly object?[] OkManagerStatuses =
         {
-            "",
             ManagerStatus.oneDeviceOk,
             ManagerStatus.threeDevicesOk,
             ManagerStatus.fiveDevicesOk,
@@ -157,7 +144,6 @@ namespace BuildingControllerTests
 
         private static readonly object?[] FaultyManagerStatuses =
         {
-            "",
             ManagerStatus.oneDeviceFaulty,
             ManagerStatus.twoDevicesOkOneDeviceFaulty,
             ManagerStatus.tenDevicesFaulty,
@@ -171,11 +157,11 @@ namespace BuildingControllerTests
         /// </summary>
         private static readonly object?[] LightManagerStatuses =
         {
-            ManagerStatus.lightsWithPrefix,
-            ManagerStatus.lightsWithPrefix + ManagerStatus.twoDevicesOkOneDeviceFaulty,
-            ManagerStatus.lightsWithPrefix + ManagerStatus.tenDevicesOk,
-            ManagerStatus.lightsWithPrefix + ManagerStatus.tenDevicesFaulty,
-            ManagerStatus.lightsWithPrefix + ManagerStatus.fiftyDevicesOk,
+            ManagerStatus.lightsWithComma,
+            ManagerStatus.lightsWithComma + ManagerStatus.twoDevicesOkOneDeviceFaulty,
+            ManagerStatus.lightsWithComma + ManagerStatus.tenDevicesOk,
+            ManagerStatus.lightsWithComma + ManagerStatus.tenDevicesFaulty,
+            ManagerStatus.lightsWithComma + ManagerStatus.fiftyDevicesOk,
         };
 
         /// <summary>
@@ -183,11 +169,11 @@ namespace BuildingControllerTests
         /// </summary>
         private static readonly object?[] DoorManagerStatuses =
         {
-            ManagerStatus.doorsWithPrefix,
-            ManagerStatus.doorsWithPrefix + ManagerStatus.twoDevicesOkOneDeviceFaulty,
-            ManagerStatus.doorsWithPrefix + ManagerStatus.tenDevicesOk,
-            ManagerStatus.doorsWithPrefix + ManagerStatus.tenDevicesFaulty,
-            ManagerStatus.doorsWithPrefix + ManagerStatus.fiftyDevicesOk,
+            ManagerStatus.doorsWithComma,
+            ManagerStatus.doorsWithComma + ManagerStatus.twoDevicesOkOneDeviceFaulty,
+            ManagerStatus.doorsWithComma + ManagerStatus.tenDevicesOk,
+            ManagerStatus.doorsWithComma + ManagerStatus.tenDevicesFaulty,
+            ManagerStatus.doorsWithComma + ManagerStatus.fiftyDevicesOk,
         };
 
         /// <summary>
@@ -195,40 +181,40 @@ namespace BuildingControllerTests
         /// </summary>
         private static readonly object?[] AlarmManagerStatuses =
         {
-            ManagerStatus.alarmWithPrefix,
-            ManagerStatus.alarmWithPrefix + ManagerStatus.twoDevicesOkOneDeviceFaulty,
-            ManagerStatus.alarmWithPrefix + ManagerStatus.tenDevicesOk,
-            ManagerStatus.alarmWithPrefix + ManagerStatus.tenDevicesFaulty,
-            ManagerStatus.alarmWithPrefix + ManagerStatus.fiftyDevicesOk,
+            ManagerStatus.alarmWithComma,
+            ManagerStatus.alarmWithComma + ManagerStatus.twoDevicesOkOneDeviceFaulty,
+            ManagerStatus.alarmWithComma + ManagerStatus.tenDevicesOk,
+            ManagerStatus.alarmWithComma + ManagerStatus.tenDevicesFaulty,
+            ManagerStatus.alarmWithComma + ManagerStatus.fiftyDevicesOk,
         };
 
 
         // LEVEL 1 TESTS //
 
         /// <summary>
-        /// Test that a valid constructor exists for <see cref="BuildingController"/> through reflection.
+        /// Test if a valid constructor exists for <see cref="BuildingController"/> through reflection.
         /// Satisfies <strong>L1R1</strong>.
         /// </summary>
         [Test]
         public void Constructor_WhenSingleParameter_HasCorrectSignature()
         {
             string? parameterName = null;
-            ConstructorInfo? constructorInfoObj;
+            ConstructorInfo? constructorInfoObject;
             Type[] argTypes = new Type[] { typeof(string) };
 
             // Lookup constructor with specified parameter
-            constructorInfoObj = typeof(BuildingController).GetConstructor(argTypes);
-            Assume.That(constructorInfoObj, Is.Not.Null);
+            constructorInfoObject = typeof(BuildingController).GetConstructor(argTypes);
+            Assume.That(constructorInfoObject, Is.Not.Null);
 
-            if (constructorInfoObj != null)
+            if (constructorInfoObject != null)
             {
                 // Verify parameter name
-                ParameterInfo[] constructorParams = constructorInfoObj.GetParameters();
+                ParameterInfo[] constructorParams = constructorInfoObject.GetParameters();
                 ParameterInfo firstParam = constructorParams.First();
                 parameterName = firstParam.Name;
             }
 
-            Assert.That(parameterName, Is.EqualTo(ControllerArgNames.buildingID));
+            Assert.That(parameterName, Is.EqualTo(ControllerArgumentNames.buildingID));
         }
 
         /// <summary>
@@ -294,43 +280,13 @@ namespace BuildingControllerTests
         // L1R7 (SetCurrentState from initial state)
 
         /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> with valid states.
-        /// Satisfies <strong>L1R7</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(ValidBuildingStates))]
-        public void SetCurrentState_WhenValidState_ReturnsTrue(string state)
-        {
-            BuildingController controller = new("");
-
-            // From initial state to any given state
-            bool result = controller.SetCurrentState(state);
-
-            Assert.That(result, Is.True);
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> with valid states.
-        /// Satisfies <strong>L1R7</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(ValidBuildingStates))]
-        public void SetCurrentState_WhenValidState_SetsState(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(state));
-        }
-
-        /// <summary>
         /// Test <see cref="BuildingController.SetCurrentState"/> with invalid states.
         /// Satisfies <strong>L1R7</strong>.
         /// </summary>
         [Test]
         public void SetCurrentState_WhenInvalidState_ReturnsFalse(
             [ValueSource(nameof(InvalidBuildingStates))][ValueSource(nameof(TestStrings))] string state,
-            [ValueSource(nameof(ValidBuildingStates))] string sourceState)
+            [ValueSource(nameof(validStates))] string sourceState)
         {
             BuildingController controller = new("");
 
@@ -339,25 +295,6 @@ namespace BuildingControllerTests
 
             Assert.That(result, Is.False);
         }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> with invalid states.
-        /// Satisfies <strong>L1R7</strong>.
-        /// </summary>
-        [Test]
-        public void SetCurrentState_WhenInvalidState_DoesNotSetState(
-            [ValueSource(nameof(InvalidBuildingStates))][ValueSource(nameof(TestStrings))] string state,
-            [ValueSource(nameof(ValidBuildingStates))] string sourceState)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(sourceState);
-            controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(sourceState));
-        }
-
 
         // LEVEL 2 TESTS //
 
@@ -437,170 +374,9 @@ namespace BuildingControllerTests
             Assert.That(result, Is.EqualTo(state));
         }
 
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'closed' state to 'open'.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCase(BuildingState.open)]
-        public void SetCurrentState_WhenCurrentStateClosed_DoesNotSetState(string state)
-        {
-            BuildingController controller = new("");
 
-            controller.SetCurrentState(BuildingState.closed);
-            controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
+ ////////////////////////////////
 
-            Assert.That(result, Is.EqualTo(BuildingState.closed));
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from 'open' state to 'closed'.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCase(BuildingState.closed)]
-        public void SetCurrentState_WhenCurrentStateOpen_DoesNotSetState(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(BuildingState.open);
-            controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(BuildingState.open));
-        }
-
-        // Emergency States
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from a 'fire alarm' state to the previous one.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
-        public void SetCurrentState_WhenMovingFromAlarmToPrevious_ReturnsTrue(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(state);
-            controller.SetCurrentState(BuildingState.fireAlarm);
-            bool result = controller.SetCurrentState(state);
-            string newState = controller.GetCurrentState();
-
-            Assert.That(result, Is.True);
-            Assert.That(newState, Is.EqualTo(state));
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from a 'fire drill' state to the previous one.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
-        public void SetCurrentState_WhenMovingFromDrillToPrevious_ReturnsTrue(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(state);
-            controller.SetCurrentState(BuildingState.fireDrill);
-            bool result = controller.SetCurrentState(state);
-            string newState = controller.GetCurrentState();
-
-            Assert.That(result, Is.True);
-            Assert.That(newState, Is.EqualTo(state));
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when transitioning from a 'fire alarm' state to one different from the previous.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
-        public void SetCurrentState_WhenMovingFromAlarmToNotPrevious_ReturnsFalse(string state)
-        {
-            BuildingController controller = new("");
-            bool stateHasChanged = false;
-
-            controller.SetCurrentState(state);
-            controller.SetCurrentState(BuildingState.fireAlarm);
-
-            foreach (string otherState in ValidBuildingStates)
-            {
-                if (otherState != state && otherState != BuildingState.fireAlarm)
-                {
-                    if (controller.SetCurrentState(otherState))
-                    {
-                        stateHasChanged = true;
-                    }
-                }
-            }
-
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(BuildingState.fireAlarm));
-            Assert.That(stateHasChanged, Is.False);
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/>r when transitioning from a 'fire drill' state to one different from the previous.
-        /// Satisfies <strong>L2R1</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
-        public void SetCurrentState_WhenMovingFromDrillToNotPrevious_ReturnsFalse(string state)
-        {
-            BuildingController controller = new("");
-            bool stateHasChanged = false;
-
-            controller.SetCurrentState(state);
-            controller.SetCurrentState(BuildingState.fireDrill);
-
-            foreach (string otherState in ValidBuildingStates)
-            {
-                if (otherState != state && otherState != BuildingState.fireDrill)
-                {
-                    if (controller.SetCurrentState(otherState))
-                    {
-                        stateHasChanged = true;
-                    }
-                }
-            }
-
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(BuildingState.fireDrill));
-            Assert.That(stateHasChanged, Is.False);
-        }
-
-        // L2R2 (SetCurrentState when same state)
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when the state is the same.
-        /// Satisfies <strong>L2R2</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(ValidBuildingStates))]
-        public void SetCurrentState_WhenSameState_ReturnsTrue(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(state);
-            bool result = controller.SetCurrentState(state);
-
-            Assert.That(result, Is.True);
-        }
-
-        /// <summary>
-        /// Test <see cref="BuildingController.SetCurrentState"/> when the state is the same.
-        /// Satisfies <strong>L2R2</strong>.
-        /// </summary>
-        [TestCaseSource(nameof(ValidBuildingStates))]
-        public void SetCurrentState_WhenSameState_RetainsState(string state)
-        {
-            BuildingController controller = new("");
-
-            controller.SetCurrentState(state);
-            controller.SetCurrentState(state);
-            string result = controller.GetCurrentState();
-
-            Assert.That(result, Is.EqualTo(state));
-        }
-
-        // L2R3 (Two-parameter Constructor)
 
         /// <summary>
         /// Test that a two-parameter constructor for <see cref="BuildingController"/> exists.
@@ -629,15 +405,15 @@ namespace BuildingControllerTests
                 secondArgName = secondParam.Name;
             }
 
-            Assert.That(firstArgName, Is.EqualTo(ControllerArgNames.buildingID));
-            Assert.That(secondArgName, Is.EqualTo(ControllerArgNames.startState));
+            Assert.That(firstArgName, Is.EqualTo(ControllerArgumentNames.buildingID));
+            Assert.That(secondArgName, Is.EqualTo(ControllerArgumentNames.startState));
         }
 
         /// <summary>
         /// Test constructor when using startState argument with a normal state.
         /// Satisfies <strong>L2R3</strong>.
         /// </summary>
-        [Test, TestCaseSource(nameof(NormalBuildingStates))]
+        [Test, TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalState_SetsStartState(string state)
         {
             BuildingController controller;
@@ -652,7 +428,7 @@ namespace BuildingControllerTests
         /// Test constructor when using startState argument with a normal state in capital letters.
         /// Satisfies <strong>L2R3</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalStateCapitals_SetsStartState(string state)
         {
             BuildingController controller;
@@ -667,7 +443,7 @@ namespace BuildingControllerTests
         /// Test constructor when using startState argument with a normal state in title case.
         /// Satisfies <strong>L2R3</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void Constructor_WhenNormalStateMixedCapitals_SetsStartState(string state)
         {
             BuildingController controller;
@@ -692,7 +468,7 @@ namespace BuildingControllerTests
             BuildingController controller;
 
             Assert.That(() => { controller = new("", state); },
-                Throws.ArgumentException.With.Property("Message").EqualTo(ExpectedStrings.initialStateException));
+                Throws.ArgumentException.With.Property("Message").EqualTo(ExpectedTexts.initialStateException));
         }
 
 
@@ -718,12 +494,12 @@ namespace BuildingControllerTests
             };
 
             string[] argNames = new string[] {
-               ControllerArgNames.buildingID,
-               ControllerArgNames.lightManager,
-               ControllerArgNames.fireAlarmManager,
-               ControllerArgNames.doorManager,
-               ControllerArgNames.webService,
-               ControllerArgNames.emailService
+               ControllerArgumentNames.buildingID,
+               ControllerArgumentNames.lightManager,
+               ControllerArgumentNames.fireAlarmManager,
+               ControllerArgumentNames.doorManager,
+               ControllerArgumentNames.webService,
+               ControllerArgumentNames.emailService
             };
 
             // Get constructor with 6 parameters, then check names
@@ -756,8 +532,6 @@ namespace BuildingControllerTests
         /// </summary>
         [Test]
         public void GetStatusReport_WhenCalled_ReturnsStatusMessages(
-            // TestStrings only used in one parameter because
-            // otherwise test cases would increase exponentially
             [ValueSource(nameof(LightManagerStatuses))] string lightStatus,
             [ValueSource(nameof(DoorManagerStatuses))] string doorStatus,
             [ValueSource(nameof(AlarmManagerStatuses))][ValueSource(nameof(TestStrings))] string alarmStatus)
@@ -775,7 +549,8 @@ namespace BuildingControllerTests
 
             string result = controller.GetStatusReport();
 
-            Assert.That(result, Is.EqualTo(string.Format("{0}{1}{2}", lightStatus ?? "", doorStatus ?? "", alarmStatus ?? "")));
+            Assert.That(result, Is.EqualTo(string.Format("{0}{1}{2}",
+                lightStatus ?? "" , doorStatus ?? "" , alarmStatus ?? "")));
         }
 
         /// <summary>
@@ -1106,7 +881,7 @@ namespace BuildingControllerTests
         /// when moving to <c>fire alarm</c> state.
         /// Satisfies <strong>L4R2</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSetAlarm(string sourceState)
         {
             ILightManager lightManager = Substitute.For<ILightManager>();
@@ -1131,7 +906,7 @@ namespace BuildingControllerTests
         /// when moving to <c>fire alarm</c> state.
         /// Satisfies <strong>L4R2</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsOpenAllDoors(string sourceState)
         {
             ILightManager lightManager = Substitute.For<ILightManager>();
@@ -1157,7 +932,7 @@ namespace BuildingControllerTests
         /// when moving to <c>fire alarm</c> state.
         /// Satisfies <strong>L4R2</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSetAllLights(string sourceState)
         {
             ILightManager lightManager = Substitute.For<ILightManager>();
@@ -1182,7 +957,7 @@ namespace BuildingControllerTests
         /// when moving to <c>fire alarm</c> state.
         /// Satisfies <strong>L4R2</strong>.
         /// </summary>
-        [TestCaseSource(nameof(NormalBuildingStates))]
+        [TestCaseSource(nameof(normalStates))]
         public void SetCurrentState_WhenMovingToAlarmState_CallsLogFireAlarm(string sourceState)
         {
             ILightManager lightManager = Substitute.For<ILightManager>();
@@ -1222,9 +997,9 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
@@ -1251,9 +1026,9 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
@@ -1279,9 +1054,9 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
@@ -1307,9 +1082,9 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
@@ -1335,9 +1110,9 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
@@ -1361,16 +1136,16 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.GetStatusReport();
 
             webService.Received(1).LogEngineerRequired(string.Format("{0}{1}{2}",
-                ManagerStatus.lightsWithPrefix, ManagerStatus.doorsWithPrefix, ManagerStatus.alarmWithPrefix));
+                ManagerStatus.lightsWithComma, ManagerStatus.doorsWithComma, ManagerStatus.alarmWithComma));
         }
 
         /// <summary>
@@ -1388,16 +1163,16 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.GetStatusReport();
 
             webService.Received(1).LogEngineerRequired(string.Format("{0}{1}",
-                ManagerStatus.lightsWithPrefix, ManagerStatus.doorsWithPrefix));
+                ManagerStatus.lightsWithComma, ManagerStatus.doorsWithComma));
         }
 
         /// <summary>
@@ -1415,16 +1190,16 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.GetStatusReport();
 
             webService.Received(1).LogEngineerRequired(string.Format("{0}{1}",
-                ManagerStatus.lightsWithPrefix, ManagerStatus.alarmWithPrefix));
+                ManagerStatus.lightsWithComma, ManagerStatus.alarmWithComma));
         }
 
         /// <summary>
@@ -1442,16 +1217,16 @@ namespace BuildingControllerTests
             IDoorManager doorManager = Substitute.For<IDoorManager>();
             IWebService webService = Substitute.For<IWebService>();
             IEmailService emailService = Substitute.For<IEmailService>();
-            lightManager.GetStatus().Returns(ManagerStatus.lightsWithPrefix + lightStatus);
-            doorManager.GetStatus().Returns(ManagerStatus.doorsWithPrefix + doorStatus);
-            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithPrefix + alarmStatus);
+            lightManager.GetStatus().Returns(ManagerStatus.lightsWithComma + lightStatus);
+            doorManager.GetStatus().Returns(ManagerStatus.doorsWithComma + doorStatus);
+            fireAlarmManager.GetStatus().Returns(ManagerStatus.alarmWithComma + alarmStatus);
 
             BuildingController controller = new("", lightManager, fireAlarmManager, doorManager, webService, emailService);
 
             controller.GetStatusReport();
 
             webService.Received(1).LogEngineerRequired(string.Format("{0}{1}",
-               ManagerStatus.doorsWithPrefix, ManagerStatus.alarmWithPrefix));
+               ManagerStatus.doorsWithComma, ManagerStatus.alarmWithComma));
         }
 
         // L4R4 
@@ -1464,7 +1239,7 @@ namespace BuildingControllerTests
         /// </summary>
         [Test]
         public void SetCurrentState_WhenMovingToAlarmState_CallsSendEmail(
-            [ValueSource(nameof(NormalBuildingStates))] string sourceState,
+            [ValueSource(nameof(normalStates))] string sourceState,
             [ValueSource(nameof(TestStrings))] string errorMessage)
         {
             ILightManager lightManager = Substitute.For<ILightManager>();
@@ -1486,8 +1261,8 @@ namespace BuildingControllerTests
 
             // Assert method call with exception message
             emailService.Received(1).SendMail(
-                ExpectedStrings.emailAddress,
-                ExpectedStrings.emailSubject,
+                ExpectedTexts.emailAddress,
+                ExpectedTexts.emailSubject,
                 Arg.Is<string>(x => x.Contains(e.Message))
             );
         }
